@@ -4,7 +4,7 @@
 A small Command Line Interface (CLI) application that checks if your Jeeps **Build Sheet** and **Sticker** have been found. When one is found, it will send you a text message notification. When both have been found the application terminates. 
 
 ## Notes
-- A [Twilio](www.twilio.com/referral/bf6oIx) account is needed (Free! No card needed.)
+- A [Twilio](www.twilio.com/referral/bf6oIx) account is needed for sending text messages (Free! No card needed.)
 - Some coding experience would be beneficial when running this CLI app
 
 ## Getting Started
@@ -12,13 +12,13 @@ A small Command Line Interface (CLI) application that checks if your Jeeps **Bui
 **Note:** this README is directed towards Unix-based shell (e.g. mac, linux)
 
 1. Clone, Fork, or Download this Repository
-2. Make sure you have **Node.js** and **npm** installed on your system. [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+2. Make sure you have `node`and `npm` installed on your system. [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
     Once you have those installed, check to make sure they are working by typing `node -v` and `npm -v` in the CLI. If versions show up, then you're ready for the next step.
 
-    If no versions are present terminate the CLI and try again. Otherwise revisit [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+    If no versions are present `source` or terminate the CLI and try again. Otherwise revisit [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-3. Get a [Twilio](www.twilio.com/referral/bf6oIx) account if you dont already have one. A trial account will work fine as this app will only send a maximum of 4 text messages. (Trial account lets you send > 3500 texts).
+3. Get a [Twilio](www.twilio.com/referral/bf6oIx) account if you dont already have one. This library allows us to send alerts, in this case text messages. A trial account will work fine as this app will only send a maximum of 4 text messages. (Trial account lets you send > 3500 texts).
 
     Once logged into Twilio, locate your account dashboard where you will find your `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN`. Also on this page you will generate your `TWILIO_PHONE_NUMBER`.
 
