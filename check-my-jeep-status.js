@@ -23,7 +23,7 @@ const MY_VIN = 'your jeep vin'
 
 const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
-var minutes = 30 // run every 30 minutes
+var minutes = 60 // run every 60 minutes
 var isBuildMessageSent = false
 var isStickerMessageSent = false
 var stickerUrl, buildSheetUrl, alertOnBuild, alertOnSticker, myNumber, vin = undefined
@@ -119,6 +119,10 @@ const checkMyJeepStatus = async () => {
 promptQuestions().then(() => {
   if(!vin) {
     console.log('Please enter a vin')
+    process.exit()
+  }
+  if(!myNumber) {
+    console.log('Please enter a phone number')
     process.exit()
   }
   if (!alertOnBuild && !alertOnSticker) {

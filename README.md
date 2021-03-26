@@ -1,7 +1,7 @@
 # My Jeep Status
 
 ## Description
-A small Command Line Interface (CLI) application that checks if your Jeeps **Build Sheet** and **Sticker** have been found. When either are found it will send you a text message notification. When both have been found the application terminates. 
+A small Command Line Interface (CLI) application that checks if your Jeeps **Build Sheet** and **Sticker** have been found. When one is found, it will send you a text message notification. When both have been found the application terminates. 
 
 ## Notes
 - A [Twilio](www.twilio.com/referral/bf6oIx) account is needed (Free! No card needed.)
@@ -20,11 +20,11 @@ A small Command Line Interface (CLI) application that checks if your Jeeps **Bui
 
 3. Get a [Twilio](www.twilio.com/referral/bf6oIx) account if you dont already have one. A trial account will work fine as this app will only send a maximum of 4 text messages. (Trial account lets you send > 3500 texts).
 
-    Once logged into Twilio, locate your account dashboard where you will find your `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN`. Also on this page you will generate your account phone number.
+    Once logged into Twilio, locate your account dashboard where you will find your `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN`. Also on this page you will generate your `TWILIO_PHONE_NUMBER`.
 
     ![Twilio Account Dashboard](assets/images/twilio-account-dashboard.png)
 
-4. Now lets use your Twilio account values in the **check-my-jeep-status** app. Navigate to the `my-jeep-status.js` file. Near the top you will see something that looks like this:
+4. Now lets use your Twilio account values in the **my-jeep-status** app. Navigate to the `check-my-jeep-status.js` file. Near the top you will see something that looks like this:
 
     ![Environment Vars](assets/images/env-vars.png)
 
@@ -38,3 +38,14 @@ A small Command Line Interface (CLI) application that checks if your Jeeps **Bui
     - `node check-my-jeep-status.js`
 
     The program should prompt you with 4 questions and once you answer and hit enter on all of them, you should recieve a text letting you know everything is working properly. 
+
+## Tips
+- You can change how frequently the program runs. Default: every hour.
+
+## F.A.Q
+1. Will this app spam my phone?
+    - No. It will alert you a maximum of 4 times. Once to confirm you are recieving texts from the app. Once for build sheet. Another for sticker and finally one letting you know the app is complete.
+2. Do I need to keep running the app?
+    - No... and yes. The app will automatically check for updated build sheet and sticker every hour. This number can be changed on `line 26` of the `check-my-jeep-status.js` file. I would not go lower than 15-30 minutes. If your computer goes to sleep it might not work, and you might have to rerun it. This can be avoided if you run it on a server.
+3. Can I star this Repository?
+    - YES. Top right corner :)
