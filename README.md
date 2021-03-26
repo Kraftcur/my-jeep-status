@@ -12,7 +12,7 @@ A small Command Line Interface (CLI) application that checks if your Jeeps **Bui
 **Note:** this README is directed towards Unix-based shell (e.g. mac, linux)
 
 1. Clone, Fork, or Download this Repository
-2. Make sure you have `node`and `npm` installed on your system. [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+2. Make sure you have `node` and `npm` installed on your system. [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
     Once you have those installed, check to make sure they are working by typing `node -v` and `npm -v` in the CLI. If versions show up, then you're ready for the next step.
 
@@ -49,3 +49,5 @@ A small Command Line Interface (CLI) application that checks if your Jeeps **Bui
     - No... and yes. The app will automatically check for updated build sheet and sticker every hour. This number can be changed on `line 26` of the `check-my-jeep-status.js` file. I would not go lower than 15-30 minutes. If your computer goes to sleep it might not work, and you might have to rerun it. This can be avoided if you run it on a server.
 3. Can I star this Repository?
     - YES. Top right corner :)
+
+**for educational purposes only**
