@@ -13,14 +13,13 @@ const TWILIO_AUTH_TOKEN = 'your twilio auth token';
 const TWILIO_PHONE_NUMBER = 'your twilio phone number';
 const MY_PHONE_NUMBER = 'your phone number' // FORMAT EXAMPLE +18002223333
 const MY_VIN = 'your jeep vin' 
-
+ 
 // OR use environment variables: https://www.twilio.com/docs/usage/secure-credentials
-/**
- * const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
- * const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
- * const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
- * const MY_PHONE_NUMBER = process.env.MY_PHONE_NUMBER
- */
+// const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+// const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+// const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+// const MY_PHONE_NUMBER = process.env.MY_PHONE_NUMBER;
+// const MY_VIN = process.env.MY_VIN;
 
 const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
@@ -33,7 +32,7 @@ var questions = [
     type: 'input',
     name: 'vin',
     message: "What's you Jeep VIN number?",
-    default: MY_VIN // enter your vin here for quick start
+    default: MY_VIN
   },
   {
     type: 'confirm',
@@ -50,7 +49,7 @@ var questions = [
   {
     type: 'input',
     name: 'number',
-    message: "Enter your phone number e.g. +12345678900: \nBe sure to enter it correctly with country code (not sure if out of US works with Twilio trial account).",
+    message: "Enter your phone number e.g. +18002223333: \nBe sure to enter it correctly with country code (not sure if out of US works with Twilio trial account).",
     default: MY_PHONE_NUMBER
   },
 ]
@@ -118,5 +117,5 @@ promptQuestions().then(() => {
   }
   sendMessage('You are all set! Leave your computer on and awake, or run the program on a server and wait for the good news!')
   checkMyJeepStatus()
-  setInterval(checkMyJeepStatus, 60*1000*30)
+  setInterval(checkMyJeepStatus, 60*1000*30) // run every 30 minutes
 })
