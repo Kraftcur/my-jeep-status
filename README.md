@@ -11,7 +11,7 @@ A small Command Line Interface (CLI) application that checks if your Jeeps **Bui
 
 **Note:** this README is directed towards Unix-based shell (e.g. mac, linux)
 
-1. Clone or Fork this Repository
+1. Clone, Fork, or Download this Repository
 2. Make sure you have **Node.js** and **npm** installed on your system. [Install Node.js/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
     Once you have those installed, check to make sure they are working by typing `node -v` and `npm -v` in the CLI. If versions show up, then you're ready for the next step.
