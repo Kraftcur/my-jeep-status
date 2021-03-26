@@ -1,5 +1,6 @@
 const inquirer = require('inquirer')
-const axios = require('axios')
+const axios = require('axios');
+const { interval } = require('rxjs');
 
 /** ACTION REQUIRED - Twilio Credentials
  * After signing up for TWILIO, you will have access to a TWILIO_ACCOUNT_SID, 
@@ -23,9 +24,10 @@ const MY_VIN = 'your jeep vin'
 
 const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
+var minutes = 30 // run every 30 minutes
 var isBuildMessageSent = false
 var isStickerMessageSent = false
-var stickerUrl, buildSheetUrl, alertOnBuild, alertOnSticker, myNumber = undefined
+var stickerUrl, buildSheetUrl, alertOnBuild, alertOnSticker, myNumber, vin = undefined
 
 var questions = [
   {
@@ -36,20 +38,20 @@ var questions = [
   },
   {
     type: 'confirm',
+    name: 'build',
+    message: 'Notify me when BUILD SHEET is FOUND?',
+    default: 'Yes'
+  },
+  {
+    type: 'confirm',
     name: 'sticker',
     message: 'Notify me when STICKER is FOUND?',
     default: 'Yes'
   },
   {
-    type: 'confirm',
-    name: 'build',
-    message: 'Notify me when BUILD is FOUND?',
-    default: 'Yes'
-  },
-  {
     type: 'input',
     name: 'number',
-    message: "Enter your phone number e.g. +18002223333: \nBe sure to enter it correctly with country code (not sure if out of US works with Twilio trial account).",
+    message: "Enter your phone number e.g. +18002223333",
     default: MY_PHONE_NUMBER
   },
 ]
@@ -72,50 +74,67 @@ const sendMessage = async (message) => {
     body: message
   })
   .catch(err => {
-    console.log(`*** TWILIO MESSAGE ERROR ${err} ***`)
+    console.log(`*** TWILIO: ${err} ***`)
+    console.log(`*** Check TWILIO_ACCOUNT_SID || TWILIO_AUTH_TOKEN || TWILIO_PHONE_NUMBER  ***`)
     process.exit()
   })
 }
 
-const terminateIfFinished = (message = 'Both BUILD SHEET and STICKER have been found. \nTerminating app.') => {
-  if (isBuildMessageSent && isStickerMessageSent) {
+const exitIfFinished = (message = `Alerting complete.\n\nBUILD SHEET: ${buildSheetUrl}\n\nSTICKER: ${stickerUrl}\n\nSuccess. Exiting app.`) => {
+  if ((isBuildMessageSent && isStickerMessageSent) || (isBuildMessageSent && !alertOnSticker) || (isStickerMessageSent && !alertOnBuild)) {
+    if (alertOnBuild) console.log(`*** BUILD SHEET ${isBuildMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
+    if (alertOnSticker) console.log(`*** STICKER ${isStickerMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
     sendMessage(`\n${message}`).then(res => {
       console.log(`${message}`)
       process.exit()
     })
+  } else {
+    const date = new Date()
+    if (alertOnBuild) console.log(`*** BUILD SHEET ${isBuildMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
+    if (alertOnSticker) console.log(`*** STICKER ${isStickerMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
+    console.log(`Checking again in ${minutes} minutes`) 
   }
 }
 
 const isPDFFound = (url) => {
   return axios.get(url)
   .then((res) => {
-    if(res.headers['content-length'] < 1150) return false
+    if (res.headers['content-length'] < 1150) return false
     return true
   }).catch(err => console.log(err))
 }
 
 const checkMyJeepStatus = async () => {
-  const date = new Date()
-  if(alertOnBuild && !isBuildMessageSent) await isPDFFound(buildSheetUrl) ? sendMessage(`\nYour Jeep BUILD SHEET was found! \n\nCheck it out: ${buildSheetUrl}`)
+
+  if (alertOnBuild && !isBuildMessageSent) if (await isPDFFound(buildSheetUrl)) await sendMessage(`\nYour Jeep BUILD SHEET was found! \n\nCheck it out: ${buildSheetUrl}`)
   .then(() => {
-    console.log(`*** BUILD SHEET FOUND -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***`)
     isBuildMessageSent = true
-  }).then(() => terminateIfFinished()) : null
+  })
+  .then(() => exitIfFinished())
 
-  if(alertOnSticker && !isStickerMessageSent) await isPDFFound(stickerUrl) ? sendMessage(`\nYour Jeep STICKER was found! \n\nCheck it out: ${stickerUrl}`)
+  if (alertOnSticker && !isStickerMessageSent) if (await isPDFFound(stickerUrl)) await sendMessage(`\nYour Jeep STICKER was found! \n\nCheck it out: ${stickerUrl}`)
   .then(() => {
-    console.log(`*** STICKER FOUND -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***`)
     isStickerMessageSent = true
-  }).then(() => terminateIfFinished()) : null
-
+  })
+  .then(() => exitIfFinished())
+  
+  if (!alertOnBuild && !alertOnSticker) {
+    console.log('Nothing to alert on. Exiting app.')
+    process.exit()
+  }
 }
 
 promptQuestions().then(() => {
   if(!vin) {
     console.log('Please enter a vin')
-    process.exit(0)
+    process.exit()
   }
-  sendMessage('You are all set! Leave your computer on and awake, or run the program on a server and wait for the good news!')
+  console.log('App running...\n')
+  console.log(`VIN: ${vin}`)
+  console.log(`Phone number: ${myNumber}`)
+  console.log(`Alerting on BUILD SHEET: ${alertOnBuild}`)
+  console.log(`Alerting on STICKER: ${alertOnSticker}\n`)
+  sendMessage(`You are all set! Leave your computer on and awake, or run the program on a server and wait for the good news! \n\n Checking VIN: ${vin}`)
   checkMyJeepStatus()
-  setInterval(checkMyJeepStatus, 60*1000*30) // run every 30 minutes
+  setInterval(checkMyJeepStatus, 60*1000*minutes)
 })
