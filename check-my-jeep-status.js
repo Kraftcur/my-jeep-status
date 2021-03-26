@@ -1,6 +1,5 @@
 const inquirer = require('inquirer')
 const axios = require('axios');
-const { interval } = require('rxjs');
 
 /** ACTION REQUIRED - Twilio Credentials
  * After signing up for TWILIO, you will have access to a TWILIO_ACCOUNT_SID, 
@@ -82,17 +81,12 @@ const sendMessage = async (message) => {
 
 const exitIfFinished = (message = `Alerting complete.\n\nBUILD SHEET: ${buildSheetUrl}\n\nSTICKER: ${stickerUrl}\n\nSuccess. Exiting app.`) => {
   if ((isBuildMessageSent && isStickerMessageSent) || (isBuildMessageSent && !alertOnSticker) || (isStickerMessageSent && !alertOnBuild)) {
-    if (alertOnBuild) console.log(`*** BUILD SHEET ${isBuildMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
-    if (alertOnSticker) console.log(`*** STICKER ${isStickerMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
     sendMessage(`\n${message}`).then(res => {
       console.log(`${message}`)
       process.exit()
     })
   } else {
-    const date = new Date()
-    if (alertOnBuild) console.log(`*** BUILD SHEET ${isBuildMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
-    if (alertOnSticker) console.log(`*** STICKER ${isStickerMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
-    console.log(`Checking again in ${minutes} minutes`) 
+    console.log(`Checking again in ${minutes} minutes\n`) 
   }
 }
 
@@ -110,23 +104,25 @@ const checkMyJeepStatus = async () => {
   .then(() => {
     isBuildMessageSent = true
   })
-  .then(() => exitIfFinished())
 
   if (alertOnSticker && !isStickerMessageSent) if (await isPDFFound(stickerUrl)) await sendMessage(`\nYour Jeep STICKER was found! \n\nCheck it out: ${stickerUrl}`)
   .then(() => {
     isStickerMessageSent = true
   })
-  .then(() => exitIfFinished())
-  
-  if (!alertOnBuild && !alertOnSticker) {
-    console.log('Nothing to alert on. Exiting app.')
-    process.exit()
-  }
+  var date = new Date()
+  if (alertOnBuild) console.log(`*** BUILD SHEET ${isBuildMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
+  if (alertOnSticker) console.log(`*** STICKER ${isStickerMessageSent ? 'FOUND' : 'NOT FOUND'} -- ${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()} ***\n`)
+
+  exitIfFinished()
 }
 
 promptQuestions().then(() => {
   if(!vin) {
     console.log('Please enter a vin')
+    process.exit()
+  }
+  if (!alertOnBuild && !alertOnSticker) {
+    console.log('Nothing to alert on. Exiting app.')
     process.exit()
   }
   console.log('App running...\n')
